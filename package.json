@@ -1,0 +1,9 @@
+{
+  "name": "otoboke-beaver-test",
+  "version": "1.0.0",
+  "description": "Otoboke Beaver test site with Decap CMS",
+  "scripts": {
+    "dev": "npx serve . -p 3000",
+    "build": "echo 'Static site - no build needed'"
+  }
+}

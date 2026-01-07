@@ -1,0 +1,224 @@
+# Decap CMS Configuration
+# https://decapcms.org/docs/configuration-options/
+
+backend:
+  name: git-gateway
+  branch: main
+
+# ローカルテスト用（本番では削除）
+local_backend: true
+
+# メディアファイルの保存先
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+# 日本語UI
+locale: 'ja'
+
+# スラッグ設定（日本語対応）
+slug:
+  encoding: "unicode"
+  clean_accents: true
+  sanitize_replacement: "-"
+
+# コレクション定義
+collections:
+  # ライブ情報
+  - name: "lives"
+    label: "ライブ情報"
+    label_singular: "ライブ"
+    folder: "content/lives"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{date}} - {{venue}}"
+    sortable_fields: ['date', 'venue']
+    view_groups:
+      - label: ステータス
+        field: status
+      - label: 年
+        field: date
+        pattern: \d{4}
+    fields:
+      - label: "日付"
+        name: "date"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        date_format: "YYYY/MM/DD"
+        time_format: false
+        picker_utc: false
+      - label: "会場"
+        name: "venue"
+        widget: "string"
+        hint: "例: 渋谷Club Quattro"
+      - label: "開場時間"
+        name: "open"
+        widget: "string"
+        required: false
+        hint: "例: 18:00"
+      - label: "開演時間"
+        name: "start"
+        widget: "string"
+        required: false
+        hint: "例: 19:00"
+      - label: "チケット料金"
+        name: "price"
+        widget: "string"
+        required: false
+        hint: "例: ¥4,000 (D別)"
+      - label: "チケットURL"
+        name: "ticket_url"
+        widget: "string"
+        required: false
+      - label: "共演者"
+        name: "lineup"
+        widget: "list"
+        required: false
+        field:
+          label: "アーティスト名"
+          name: "artist"
+          widget: "string"
+      - label: "備考"
+        name: "note"
+        widget: "text"
+        required: false
+      - label: "ステータス"
+        name: "status"
+        widget: "select"
+        options:
+          - { label: "予定", value: "upcoming" }
+          - { label: "アーカイブ", value: "archived" }
+          - { label: "中止", value: "cancelled" }
+        default: "upcoming"
+
+  # ニュース
+  - name: "news"
+    label: "ニュース"
+    label_singular: "記事"
+    folder: "content/news"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{date}} - {{title}}"
+    fields:
+      - label: "タイトル"
+        name: "title"
+        widget: "string"
+      - label: "投稿日"
+        name: "date"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        date_format: "YYYY/MM/DD"
+        time_format: false
+      - label: "アイキャッチ画像"
+        name: "thumbnail"
+        widget: "image"
+        required: false
+      - label: "本文"
+        name: "body"
+        widget: "markdown"
+      - label: "公開設定"
+        name: "published"
+        widget: "boolean"
+        default: true
+
+  # バイオグラフィ（単一ページ）
+  - name: "pages"
+    label: "ページ"
+    files:
+      - name: "biography"
+        label: "バイオグラフィ"
+        file: "content/pages/biography.md"
+        fields:
+          - label: "タイトル"
+            name: "title"
+            widget: "string"
+            default: "BIOGRAPHY"
+          - label: "バンド紹介"
+            name: "intro"
+            widget: "markdown"
+          - label: "メンバー"
+            name: "members"
+            widget: "list"
+            fields:
+              - label: "名前"
+                name: "name"
+                widget: "string"
+              - label: "パート"
+                name: "part"
+                widget: "string"
+              - label: "写真"
+                name: "photo"
+                widget: "image"
+                required: false
+              - label: "プロフィール"
+                name: "bio"
+                widget: "text"
+                required: false
+
+      - name: "discography"
+        label: "ディスコグラフィ"
+        file: "content/pages/discography.md"
+        fields:
+          - label: "タイトル"
+            name: "title"
+            widget: "string"
+            default: "DISCOGRAPHY"
+          - label: "リリース一覧"
+            name: "releases"
+            widget: "list"
+            fields:
+              - label: "タイトル"
+                name: "title"
+                widget: "string"
+              - label: "リリース日"
+                name: "date"
+                widget: "datetime"
+                format: "YYYY-MM-DD"
+                date_format: "YYYY/MM/DD"
+                time_format: false
+              - label: "種類"
+                name: "type"
+                widget: "select"
+                options: ["Album", "EP", "Single", "Split"]
+              - label: "ジャケット"
+                name: "cover"
+                widget: "image"
+              - label: "レーベル"
+                name: "label"
+                widget: "string"
+                required: false
+              - label: "収録曲"
+                name: "tracks"
+                widget: "list"
+                field:
+                  label: "曲名"
+                  name: "track"
+                  widget: "string"
+
+  # サイト設定
+  - name: "settings"
+    label: "サイト設定"
+    files:
+      - name: "general"
+        label: "基本設定"
+        file: "content/settings/general.json"
+        fields:
+          - label: "サイト名"
+            name: "site_name"
+            widget: "string"
+            default: "OTOBOKE BEAVER"
+          - label: "サイト説明"
+            name: "description"
+            widget: "text"
+          - label: "OGP画像"
+            name: "ogp_image"
+            widget: "image"
+            required: false
+          - label: "SNSリンク"
+            name: "social"
+            widget: "object"
+            fields:
+              - { label: "Twitter", name: "twitter", widget: "string", required: false }
+              - { label: "Instagram", name: "instagram", widget: "string", required: false }
+              - { label: "Facebook", name: "facebook", widget: "string", required: false }
+              - { label: "YouTube", name: "youtube", widget: "string", required: false }
+              - { label: "Note", name: "note", widget: "string", required: false }

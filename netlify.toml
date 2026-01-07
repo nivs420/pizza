@@ -1,0 +1,19 @@
+[build]
+  publish = "."
+
+[dev]
+  command = "npx serve . -p 3000"
+  targetPort = 3000
+  port = 8888
+  publish = "."
+  autoLaunch = true
+
+# Decap CMS local backend support
+[[redirects]]
+  from = "/admin"
+  to = "/admin/index.html"
+  status = 200
+
+# Enable Netlify Identity
+[build.environment]
+  NODE_VERSION = "18"
