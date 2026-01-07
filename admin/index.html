@@ -5,19 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
     <title>管理画面 - OTOBOKE BEAVER</title>
+    
+    <!-- Netlify Identity Widget - 必ずDecap CMSより先に読み込む -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    
     <style>
-        /* Custom styling for Decap CMS */
-        [data-slate-editor] { 
-            -webkit-user-modify: read-write !important; 
-        }
+        body { margin: 0; padding: 0; }
+        [data-slate-editor] { -webkit-user-modify: read-write !important; }
     </style>
 </head>
 <body>
-    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
     <script>
-        // Initialize Decap CMS
-        CMS.init();
+        // ========================================
+        // 招待トークン・確認トークンの処理
+        // ========================================
+        (function() {
+            // URLハッシュにトークンが含まれているかチェック
+            var hash = window.location.hash;
+            
+            if (hash.includes("invite_token") || 
+                hash.includes("confirmation_token") ||
+                hash.includes("recovery_token") ||
+                hash.includes("access_token")) {
+                
+                // Netlify Identity Widget でトークンを処理
+                if (window.netlifyIdentity) {
+                    // ウィジェットを初期化して開く
+                    window.netlifyIdentity.init();
+                    window.netlifyIdentity.open();
+                    
+                    // ログイン成功後にリダイレクト
+                    window.netlifyIdentity.on("login", function() {
+                        // ハッシュをクリアしてリロード
+                        window.location.href = "/admin/";
+                    });
+                }
+            }
+        })();
+    </script>
+    
+    <!-- Decap CMS -->
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    
+    <script>
+        // ========================================
+        // Netlify Identity イベント処理
+        // ========================================
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", function(user) {
+                if (!user) {
+                    // 未ログインの場合、ログイン後にリダイレクト
+                    window.netlifyIdentity.on("login", function() {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+            
+            window.netlifyIdentity.on("logout", function() {
+                document.location.href = "/";
+            });
+            
+            window.netlifyIdentity.on("error", function(err) {
+                console.error("Netlify Identity Error:", err);
+            });
+        }
     </script>
 </body>
 </html>
